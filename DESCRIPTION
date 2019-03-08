@@ -1,0 +1,20 @@
+Package: caRtegraph
+Title: Cartegraph API Integration with R
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Geoffrey",
+           family = "Arnold",
+           role = c("aut", "cre"),
+           email = "geoffrey.arnold@pittsburghpa.gov")
+Description: Easily communicate with the Cartegraph API Service
+License: MIT Licenses + file
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    dplyr,
+    httr,
+    sp,
+    rgdal,
+    jsonlite,
+    maptools
+RoxygenNote: 6.1.1
