@@ -35,13 +35,13 @@ cgDf <- function(class, fields = "", filter = "", un, pw, org) {
   while(total > nrow(df_final)) {
     offset <- as.numeric(j$`_metadata`$offset + j$`_metadata`$limit)
 
-    url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class, "?fields=", fields, "&limit=1000&offset=", offset, filter)
+    url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
     request <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
     content <- httr::content(request, as = "text")
 
     j <- jsonlite::fromJSON(content)
 
-    df <- data.frame(j[class])
+    df <- data.frame(j[[class]])
 
     df_final <- rbind(df_final, df)
   }
