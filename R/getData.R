@@ -210,7 +210,7 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org) {
     ap <- lapply(load$CgShape$Points, makeLine)
     lines <- sp::SpatialLines(ap, proj4string=CRS("+proj=utm +north +zone=16T + datum=WGS84"))
 
-    sp::pChFIDs(lines) <- load$Oid
+    sp::spChFIDs(lines) <- load$Oid
     row.names(load) <- load$Oid
 
     tmp <- SpatialLinesDataFrame(lines, load)
