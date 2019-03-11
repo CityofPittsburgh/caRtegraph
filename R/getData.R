@@ -208,12 +208,12 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org) {
     load <- load[!is.na(load$CgShape$ShapeType),]
 
     ap <- lapply(load$CgShape$Points, makeLine)
-    lines <- sp::SpatialLines(ap, proj4string=CRS("+proj=utm +north +zone=16T + datum=WGS84"))
+    lines <- sp::SpatialLines(ap, proj4string=sp::CRS("+proj=utm +north +zone=16T + datum=WGS84"))
 
     sp::spChFIDs(lines) <- load$Oid
     row.names(load) <- load$Oid
 
-    tmp <- SpatialLinesDataFrame(lines, load)
+    tmp <- sp::SpatialLinesDataFrame(lines, load)
     tmp$CgShape <- NULL
 
     final <- maptools::spRbind(final, tmp)
@@ -320,7 +320,7 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
     }
     # Same ID's
     row.names(df) <- df$Oid
-    spChFIDs(polys) <- df$Oid
+    sp::spChFIDs(polys) <- df$Oid
     # Build Temp Shape
     polys_temp <- sp::SpatialPolygonsDataFrame(polys, df, match.ID = TRUE)
     # Add to previous
