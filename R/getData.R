@@ -331,3 +331,55 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
 
   return(polys_final)
 }
+
+#' Get a Single Attachment
+#'
+#' @param class class requesting attachment from
+#' @param filename output file name, names not ending in ".jpg" will have value appended.
+#' @param Oid Oid of the attachment
+#' @param un api username
+#' @param pw api password
+#' @param org orginization API ID ie 'PittsburghPA'
+#'
+#' @return saved jpeg image
+#' @export
+#'
+#' @examples
+cgAttachment <- function(class, filename, Oid, un, pw, org) {
+  url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/attachments/primary/", class, "/", Oid)
+  filename <- ifelse(grepl(".jpg$", filename), filename, paste0(filename, ".jpg"))
+  httr::GET(url, httr::authenticate(un, pw, type = "basic"), httr::write_disk(filename, overwrite = TRUE))
+}
+
+#' Get Multiple attachments from a class
+#'
+#' @param class class requesting attachments from
+#' @param outDir save directory defaults to class name, optional
+#' @param filter filter to be applied to class
+#' @param zip option to zip the folder
+#' @param un api username
+#' @param pw api password
+#' @param org orginization API ID ie 'PittsburghPA'
+#'
+#' @return folder of saved jpeg images
+#' @export
+#'
+#' @examples
+cgAttachments <- function(class, outDir ="", filter = '([PrimaryAttachment]%20!=%20"")', zip = FALSE, un, pw, org) {
+  # Create Folder for Class images
+  filter = ifelse(filter == '([PrimaryAttachment]%20!=%20"")', gsub("\\*)$", '%20AND%20[PrimaryAttachment]%20!=%20"")'))
+  outDir = ifelse(outDir == "", class, "")
+  dir.create(outDir, showWarnings = FALSE)
+  # Request class
+  df <- caRtegraph::cgDf(class, "IDField,PrimaryAttachmentField", filter, un, pw, org)
+  # Grab attachments by Oid
+  for (i in 1:nrow(df)) {
+    filename = paste0(outDir, "/", df$IDField[i])
+    cgAttachment(class, filename, df$Oid[i], un, pw , org)
+  }
+  if (zip) {
+    files2zip <- dir(outDir, full.names = TRUE)
+    zip(zipfile = outDir, files = files2zip)
+    unlink(outDir, recursive = TRUE)
+  }
+}
