@@ -5,7 +5,7 @@
 \title{Get multiple primary attachments from a class}
 \usage{
 cgAttachments(class, outDir = "",
-  filter = "([PrimaryAttachment]\%20!=\%20\\"\\")", zip = FALSE, un,
+  filter = "([PrimaryAttachment]\%20<>\%20\\"\\")", zip = FALSE, un,
   pw, org)
 }
 \arguments{

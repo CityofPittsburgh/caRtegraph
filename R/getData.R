@@ -339,7 +339,7 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
   return(polys_final)
 }
 
-#' Get a Single Primary Attachment
+#' Get a single primary Attachment
 #'
 #' @param class class requesting attachment from
 #' @param filename output file name, names not ending in ".jpg" will have value appended.
@@ -384,10 +384,10 @@ cgAttachment <- function(class, filename, Oid, un, pw, org) {
 #'     pw = "fakePwd",
 #'     org = "AnytownUSA")
 #' }
-cgAttachments <- function(class, outDir ="", filter = '([PrimaryAttachment]%20!=%20"")', zip = FALSE, un, pw, org) {
+cgAttachments <- function(class, outDir ="", filter = '([PrimaryAttachment]%20<>%20"")', zip = FALSE, un, pw, org) {
   # Create Folder for Class images
-  filter = ifelse(filter == '([PrimaryAttachment]%20!=%20"")', filter, gsub("\\*)$", '%20AND%20[PrimaryAttachment]%20!=%20"")'))
-  outDir = ifelse(outDir == "", class, "")
+  filter = ifelse(filter == '([PrimaryAttachment]%20<>%20"")', filter, gsub("\\*)$", '%20AND%20[PrimaryAttachment]%20<>%20"")'))
+  outDir = ifelse(outDir == "", class, outDir)
   dir.create(outDir, showWarnings = FALSE)
   # Request class
   df <- caRtegraph::cgDf(class, "IDField,PrimaryAttachmentField", filter, un, pw, org)
