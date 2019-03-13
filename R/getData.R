@@ -386,7 +386,7 @@ cgAttachment <- function(class, filename, Oid, un, pw, org) {
 #' }
 cgAttachments <- function(class, outDir ="", filter = '([PrimaryAttachment]%20!=%20"")', zip = FALSE, un, pw, org) {
   # Create Folder for Class images
-  filter = ifelse(filter == '([PrimaryAttachment]%20!=%20"")', gsub("\\*)$", '%20AND%20[PrimaryAttachment]%20!=%20"")'))
+  filter = ifelse(filter == '([PrimaryAttachment]%20!=%20"")', filter, gsub("\\*)$", '%20AND%20[PrimaryAttachment]%20!=%20"")'))
   outDir = ifelse(outDir == "", class, "")
   dir.create(outDir, showWarnings = FALSE)
   # Request class
