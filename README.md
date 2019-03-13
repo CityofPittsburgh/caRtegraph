@@ -8,7 +8,7 @@ R package for communicating with the Cartegraph API
 `devtools::install_github("CityofPittsburgh/caRtegraph")`
 
 ## What is Cartegraph?
-[Cartegraph](https://www.cartegraph.com/) is an asset management software that is widely used by numerous governments.
+[Cartegraph](https://www.cartegraph.com/) is an asset management software that is widely used by municipal governments.
 
 ## Usage
 
