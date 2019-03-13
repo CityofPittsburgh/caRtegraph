@@ -27,6 +27,8 @@ Return dataframe object rom CartegraphA PI
 }
 \examples{
 \dontrun{
-pools <- cgDf("PoolsClass", "Oid,IDField,NeighborhoodField,PoolCapacityField,PoolTypeField,RetiredField,WaterSourceField", un = "fakeUn", pw = "fakePwd", org = "AnytownUSA")
+pools <- cgDf("PoolsClass",
+"Oid,IDField,NeighborhoodField,PoolCapacityField,PoolTypeField,RetiredField,WaterSourceField",
+un = "fakeUn", pw = "fakePwd", org = "AnytownUSA")
 }
 }

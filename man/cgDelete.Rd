@@ -17,6 +17,14 @@ cgDelete(class, oid, un, pw, org)
 
 \item{org}{orginization API ID ie 'PittsburghPA'}
 }
+\value{
+http status
+}
 \description{
 Title
+}
+\examples{
+\dontrun{
+cgDelete("cgSignsClass", "123", "fakePW", "AnyTownUSA")
+}
 }

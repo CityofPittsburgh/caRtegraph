@@ -9,7 +9,9 @@
 #'
 #' @return data.frame
 #' @examples \dontrun{
-#' pools <- cgDf("PoolsClass", "Oid,IDField,NeighborhoodField,PoolCapacityField,PoolTypeField,RetiredField,WaterSourceField", un = "fakeUn", pw = "fakePwd", org = "AnytownUSA")
+#' pools <- cgDf("PoolsClass",
+#' "Oid,IDField,NeighborhoodField,PoolCapacityField,PoolTypeField,RetiredField,WaterSourceField",
+#' un = "fakeUn", pw = "fakePwd", org = "AnytownUSA")
 #' }
 #' @export
 cgDf <- function(class, fields = "", filter = "", un, pw, org) {
@@ -59,9 +61,11 @@ cgDf <- function(class, fields = "", filter = "", un, pw, org) {
 #'
 #' @return SpatialPointsDataFrame
 #'
-#' @examples \dontrun{"
-#' signs <- cgPoints(cgSignsClass",
-#' c("MUTCDCodeField", "LocatorAddressNumberField", "PavementField", "LocatorStreetField", "LocatorCityField", "MountingFixtureField", "InstalledField"),
+#' @examples \dontrun{
+#' signs <- cgPoints("cgSignsClass",
+#' c("MUTCDCodeField", "LocatorAddressNumberField",
+#' "PavementField", "LocatorStreetField", "LocatorCityField",
+#' "MountingFixtureField", "InstalledField"),
 #' '(%5BMUTCDCode%5D%20in%20(%22R1-1%22,%20%22W3-D1%22))',
 #' "fakeUn""fakePwd")
 #' }
@@ -137,7 +141,10 @@ cgPoints <- function(class, fields = "", filter = "", un, pw, org) {
 #'
 #' @return Lines
 #'
-#' @examples
+#' @examples \dontrun{
+#' # Used in cgLine function
+#' ap <- lapply(load$CgShape$Points, makeLine)
+#' }
 #' @export
 makeLine <- function(x) {
   sp::Lines(sp::Line(cbind(x["Lng"], x["Lat"])), ID = paste(c(sample(1:9,1), sample( 0:9, 19, replace=TRUE)), collapse=""))
@@ -154,7 +161,7 @@ makeLine <- function(x) {
 #'
 #' @return SpatialPointsDataFrame
 #'
-#' @examples \dontrun {
+#' @examples \dontrun{
 #' markings <- cgLine("cgMarkingsClass",
 #'     "Oid,IDField,TypeField,StreetField,PavementField",
 #'     un = "fakeUn",
@@ -235,7 +242,7 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org) {
 #'
 #' @return SpatialPointsDataFrame
 #'
-#' @examples \dontrun {
+#' @examples \dontrun{
 #' cgPoly("cgFacilities",
 #'     filter = "([Inactive]%20=%20false)",
 #'     un = "fakeUn",
@@ -332,7 +339,7 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
   return(polys_final)
 }
 
-#' Get a Single Attachment
+#' Get a Single Primary Attachment
 #'
 #' @param class class requesting attachment from
 #' @param filename output file name, names not ending in ".jpg" will have value appended.
@@ -341,17 +348,23 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
 #'
-#' @return saved jpeg image
+#' @return A saved jpeg image
 #' @export
 #'
-#' @examples
+#' @examples \dontrun{
+#' cgAttachment("cgFacilitiesClass",
+#'     Oid = 31459,
+#'     un = "fakeUn",
+#'     pw = "fakePwd",
+#'     org = "AnytownUSA")
+#' }
 cgAttachment <- function(class, filename, Oid, un, pw, org) {
   url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/attachments/primary/", class, "/", Oid)
   filename <- ifelse(grepl(".jpg$", filename), filename, paste0(filename, ".jpg"))
   httr::GET(url, httr::authenticate(un, pw, type = "basic"), httr::write_disk(filename, overwrite = TRUE))
 }
 
-#' Get Multiple attachments from a class
+#' Get multiple primary attachments from a class
 #'
 #' @param class class requesting attachments from
 #' @param outDir save directory defaults to class name, optional
@@ -364,7 +377,13 @@ cgAttachment <- function(class, filename, Oid, un, pw, org) {
 #' @return folder of saved jpeg images
 #' @export
 #'
-#' @examples
+#' @examples \dontrun{
+#' cgAttachments("cgFacilities",
+#'     filter = "([Inactive]%20=%20false)",
+#'     un = "fakeUn",
+#'     pw = "fakePwd",
+#'     org = "AnytownUSA")
+#' }
 cgAttachments <- function(class, outDir ="", filter = '([PrimaryAttachment]%20!=%20"")', zip = FALSE, un, pw, org) {
   # Create Folder for Class images
   filter = ifelse(filter == '([PrimaryAttachment]%20!=%20"")', gsub("\\*)$", '%20AND%20[PrimaryAttachment]%20!=%20"")'))

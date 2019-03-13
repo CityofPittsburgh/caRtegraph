@@ -26,7 +26,7 @@ SpatialPointsDataFrame
 Return Polygons
 }
 \examples{
-\dontrun {
+\dontrun{
 cgPoly("cgFacilities",
     filter = "([Inactive]\%20=\%20false)",
     un = "fakeUn",

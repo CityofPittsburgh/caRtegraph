@@ -26,7 +26,7 @@ SpatialPointsDataFrame
 Return Lines
 }
 \examples{
-\dontrun {
+\dontrun{
 markings <- cgLine("cgMarkingsClass",
     "Oid,IDField,TypeField,StreetField,PavementField",
     un = "fakeUn",

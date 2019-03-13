@@ -26,9 +26,11 @@ SpatialPointsDataFrame
 Return Points
 }
 \examples{
-\dontrun{"
-signs <- cgPoints(cgSignsClass",
-c("MUTCDCodeField", "LocatorAddressNumberField", "PavementField", "LocatorStreetField", "LocatorCityField", "MountingFixtureField", "InstalledField"),
+\dontrun{
+signs <- cgPoints("cgSignsClass",
+c("MUTCDCodeField", "LocatorAddressNumberField",
+"PavementField", "LocatorStreetField", "LocatorCityField",
+"MountingFixtureField", "InstalledField"),
 '(\%5BMUTCDCode\%5D\%20in\%20(\%22R1-1\%22,\%20\%22W3-D1\%22))',
 "fakeUn""fakePwd")
 }

@@ -7,16 +7,23 @@
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
 #'
-#' @return
+#' @return http status
 #' @export
 #'
-#' @examples
+#' @examples \dontrun{
+#' df$cgSignsClass <- data.frame(Oid = 242283165,
+#'      AddressNumberField = 4771,
+#'      StreetField = '123 Main Street')
+#'
+#' cgPut("cgSignsClass", df,"fakeUN", "fakePW", "AnyTownUSA")
+#' }
 cgPut <- function(class, body, un, pw, org) {
   json <- jsonlite::toJSON(body)
 
   url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class)
 
-  httr::PUT(url, httr::authenticate(un, pw, type = "basic"), body = json)
+  P <- httr::PUT(url, httr::authenticate(un, pw, type = "basic"), body = json)
+  print(httr::content(P))
 }
 
 #' Title
@@ -27,10 +34,12 @@ cgPut <- function(class, body, un, pw, org) {
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
 #'
-#' @return
+#' @return http status
 #' @export
 #'
-#' @examples
+#' @examples \dontrun{
+#' cgDelete("cgSignsClass", "123", "fakePW", "AnyTownUSA")
+#' }
 cgDelete <- function(class, oid, un, pw, org) {
   url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class, "/", oid)
 

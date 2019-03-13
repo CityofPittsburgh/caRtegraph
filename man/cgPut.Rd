@@ -17,6 +17,18 @@ cgPut(class, body, un, pw, org)
 
 \item{org}{orginization API ID ie 'PittsburghPA'}
 }
+\value{
+http status
+}
 \description{
 Put Data in Cartegraph
+}
+\examples{
+\dontrun{
+df$cgSignsClass <- data.frame(Oid = 242283165,
+     AddressNumberField = 4771,
+     StreetField = '123 Main Street')
+
+cgPut("cgSignsClass", df,"fakeUN", "fakePW", "AnyTownUSA")
+}
 }

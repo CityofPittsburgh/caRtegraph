@@ -15,3 +15,9 @@ Lines
 \description{
 Make Line
 }
+\examples{
+\dontrun{
+# Used in cgLine function
+ap <- lapply(load$CgShape$Points, makeLine)
+}
+}

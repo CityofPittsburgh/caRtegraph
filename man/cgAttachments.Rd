@@ -2,7 +2,7 @@
 % Please edit documentation in R/getData.R
 \name{cgAttachments}
 \alias{cgAttachments}
-\title{Get Multiple attachments from a class}
+\title{Get multiple primary attachments from a class}
 \usage{
 cgAttachments(class, outDir = "",
   filter = "([PrimaryAttachment]\%20!=\%20\\"\\")", zip = FALSE, un,
@@ -27,5 +27,14 @@ cgAttachments(class, outDir = "",
 folder of saved jpeg images
 }
 \description{
-Get Multiple attachments from a class
+Get multiple primary attachments from a class
+}
+\examples{
+\dontrun{
+cgAttachments("cgFacilities",
+    filter = "([Inactive]\%20=\%20false)",
+    un = "fakeUn",
+    pw = "fakePwd",
+    org = "AnytownUSA")
+}
 }

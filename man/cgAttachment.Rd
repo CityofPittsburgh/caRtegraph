@@ -2,7 +2,7 @@
 % Please edit documentation in R/getData.R
 \name{cgAttachment}
 \alias{cgAttachment}
-\title{Get a Single Attachment}
+\title{Get a Single Primary Attachment}
 \usage{
 cgAttachment(class, filename, Oid, un, pw, org)
 }
@@ -20,8 +20,17 @@ cgAttachment(class, filename, Oid, un, pw, org)
 \item{org}{orginization API ID ie 'PittsburghPA'}
 }
 \value{
-saved jpeg image
+A saved jpeg image
 }
 \description{
-Get a Single Attachment
+Get a Single Primary Attachment
+}
+\examples{
+\dontrun{
+cgAttachment("cgFacilitiesClass",
+    Oid = 31459,
+    un = "fakeUn",
+    pw = "fakePwd",
+    org = "AnytownUSA")
+}
 }
