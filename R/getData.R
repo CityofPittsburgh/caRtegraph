@@ -102,7 +102,7 @@ cgPoints <- function(class, fields = "", filter = "", un, pw, org) {
   df$CgShape <- NULL
   # Final
   points_final <- sp::SpatialPointsDataFrame(sp::coordinates(pts), df, match.ID = "Oid")
-  sp::proj4string(points_final) <- sp::CRS("+proj=utm +north +zone=16T + datum=WGS84")
+  sp::proj4string(points_final) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
   while(total > nrow(points_final@data)) {
     offset <- as.numeric(j$`_metadata`$offset + j$`_metadata`$limit)
@@ -126,7 +126,7 @@ cgPoints <- function(class, fields = "", filter = "", un, pw, org) {
 
     # Temp Data to Bind
     points_temp <- sp::SpatialPointsDataFrame(sp::coordinates(pts), df, match.ID = "Oid")
-    sp::proj4string(points_temp) <- sp::CRS("+proj=utm +north +zone=16T + datum=WGS84")
+    sp::proj4string(points_temp) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
     # Bind Temp to Final
     points_final <- maptools::spRbind(points_final, points_temp)
@@ -193,7 +193,7 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org) {
   load <- load[!is.na(load$CgShape$ShapeType),]
 
   ap <- lapply(load$CgShape$Points, makeLine)
-  lines <- sp::SpatialLines(ap, proj4string=sp::CRS("+proj=utm +north +zone=16T + datum=WGS84"))
+  lines <- sp::SpatialLines(ap, proj4string=sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
 
   sp::spChFIDs(lines) <- load$Oid
   row.names(load) <- load$Oid
@@ -215,7 +215,7 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org) {
     load <- load[!is.na(load$CgShape$ShapeType),]
 
     ap <- lapply(load$CgShape$Points, makeLine)
-    lines <- sp::SpatialLines(ap, proj4string=sp::CRS("+proj=utm +north +zone=16T + datum=WGS84"))
+    lines <- sp::SpatialLines(ap, proj4string=sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
 
     sp::spChFIDs(lines) <- load$Oid
     row.names(load) <- load$Oid
@@ -281,10 +281,10 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
     p <- sp::Polygon(coords_t)
     ps <- sp::Polygons(list(p),i)
     if (count == 1) {
-      polys <-  sp::SpatialPolygons(list(ps), proj4string=sp::CRS("+proj=utm +north +zone=16T + datum=WGS84"))
+      polys <-  sp::SpatialPolygons(list(ps), proj4string=sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
       count <- 2
     } else {
-      temp <-  sp::SpatialPolygons(list(ps), proj4string=sp::CRS("+proj=utm +north +zone=16T + datum=WGS84"))
+      temp <-  sp::SpatialPolygons(list(ps), proj4string=sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
       # Bind old polygons to new
       polys <- maptools::spRbind(polys, temp)
     }
@@ -317,10 +317,10 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
       p <- sp::Polygon(coords_t)
       ps <- sp::Polygons(list(p),i)
       if (count == 1) {
-        polys <-  sp::SpatialPolygons(list(ps), proj4string=sp::CRS("+proj=utm +north +zone=16T + datum=WGS84"))
+        polys <-  sp::SpatialPolygons(list(ps), proj4string=sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
         count <- 2
       } else {
-        temp <-  sp::SpatialPolygons(list(ps), proj4string=sp::CRS("+proj=utm +north +zone=16T + datum=WGS84"))
+        temp <-  sp::SpatialPolygons(list(ps), proj4string=sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
         # Bind old polygons to new
         polys <- maptools::spRbind(polys, temp)
       }
