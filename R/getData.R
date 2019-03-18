@@ -364,8 +364,16 @@ cgAttachment <- function(class, filename, Oid, un, pw, org) {
   filename <- gsub(" ", "_", filename)
   r <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
   if (r$status_code == 200) {
-    jpg <- httr::content(r, type = "image/jpeg")
-    jpeg::writeJPEG(jpg, filename)
+    if (httr::headers(r)$`content-type` == "image/jpeg") {
+      jpg <- httr::content(r, type = "image/jpeg")
+      jpeg::writeJPEG(jpg, filename)
+    } else if (httr::headers(r)$`content-type` == "image/png"){
+        png <- httr::content(r, tyoe = "image/png")
+        filename <- gsub(".jpg", ".png", filename)
+        png::writePNG(png, filename)
+    } else {
+      warning("Attachment is not a jpeg or png file")
+    }
   } else {
     warning("Failed to get/save image: ", filename)
   }
