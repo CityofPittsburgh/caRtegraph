@@ -361,7 +361,7 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
 cgAttachment <- function(class, filename, Oid, un, pw, org) {
   url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/attachments/primary/", class, "/", Oid)
   filename <- ifelse(grepl(".jpg$", filename), filename, paste0(filename, ".jpg"))
-  httr::GET(url, httr::authenticate(un, pw, type = "basic"), httr::write_disk(filename, overwrite = TRUE))
+  httr::RETRY("GET", url, httr::authenticate(un, pw, type = "basic"), httr::write_disk(filename, overwrite = TRUE), times = 10, terminate_on = NULL)
 }
 
 #' Get multiple primary attachments from a class
