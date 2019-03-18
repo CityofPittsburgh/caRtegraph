@@ -361,7 +361,7 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
 cgAttachment <- function(class, filename, Oid, un, pw, org) {
   url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/attachments/primary/", class, "/", Oid)
   filename <- ifelse(grepl(".jpg$", filename), filename, paste0(filename, ".jpg"))
-  r <- GET(url, httr::authenticate(un, pw, type = "basic"))
+  r <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
   if (r$status_code == 200) {
     jpg <- httr::content(r, type = "image/jpeg")
     jpeg::writeJPEG(jpg, filename)
