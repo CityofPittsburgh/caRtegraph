@@ -372,10 +372,10 @@ cgAttachment <- function(class, filename, Oid, un, pw, org) {
         filename <- gsub(".jpg", ".png", filename)
         png::writePNG(png, filename)
     } else {
-      warning("Attachment is not a jpeg or png file")
+      warning("Attachment for ", Oid, " is not a jpeg or png file. Failed to save image")
     }
   } else {
-    warning("Failed to get/save image: ", filename)
+    warning("Failed to get/save image: ", Oid)
   }
 }
 
