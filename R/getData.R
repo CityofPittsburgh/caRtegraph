@@ -363,14 +363,21 @@ cgAttachment <- function(class, filename, Oid, un, pw, org) {
   filename <- ifelse(grepl(".jpg$", filename), filename, paste0(filename, ".jpg"))
   filename <- gsub(" ", "_", filename)
   r <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
+
   if (r$status_code == 200) {
-    if (httr::headers(r)$`content-type` == "image/jpeg") {
+  type <- tryCatch({
+      check <- httr::content(r, type = httr::headers(r)$`content-type`)
+      type <- httr::headers(r)$`content-type`
+    }, error = function(x) {
+      type <-"image/jpeg"
+    })
+    if (type == "image/jpeg") {
       jpg <- httr::content(r, type = "image/jpeg")
       jpeg::writeJPEG(jpg, filename)
-    } else if (httr::headers(r)$`content-type` == "image/png"){
-        png <- httr::content(r, tyoe = "image/png")
-        filename <- gsub(".jpg", ".png", filename)
-        png::writePNG(png, filename)
+    } else if (type == "image/png") {
+      png <- httr::content(r, type = "image/png")
+      filename <- gsub(".jpg", ".png", filename)
+      png::writePNG(png, filename)
     } else {
       warning("Attachment for ", Oid, " is not a jpeg or png file. Failed to save image")
     }
