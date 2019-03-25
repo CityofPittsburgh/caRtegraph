@@ -199,7 +199,7 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org) {
   row.names(load) <- load$Oid
 
   load$CgShape <- NULL
-  final <- sp::SpatialLinesDataFrame(lines, jsonlite::flatten(load))
+  final <- sp::SpatialLinesDataFrame(lines, jsonlite::flatten(load), match.ID = "Oid")
 
   sent <- 1000
 
@@ -222,7 +222,7 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org) {
     row.names(load) <- load$Oid
     load$CgShape <- NULL
 
-    tmp <- sp::SpatialLinesDataFrame(lines, jsonlite::flatten(load))
+    tmp <- sp::SpatialLinesDataFrame(lines, jsonlite::flatten(load), match.ID = "Oid")
 
     final <- maptools::spRbind(final, tmp)
 
@@ -294,7 +294,7 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
   row.names(df) <- df$Oid
   sp::spChFIDs(polys) <- df$Oid
 
-  polys_final <- sp::SpatialPolygonsDataFrame(polys, jsonlite::flatten(df), match.ID = TRUE)
+  polys_final <- sp::SpatialPolygonsDataFrame(polys, jsonlite::flatten(df), match.ID = "Oid")
 
   sent <- 1000
   while(total > sent) {
@@ -331,7 +331,7 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
     sp::spChFIDs(polys) <- df$Oid
 
     # Build Temp Shape
-    polys_temp <- sp::SpatialPolygonsDataFrame(polys, jsonlite::flatten(df), match.ID = TRUE)
+    polys_temp <- sp::SpatialPolygonsDataFrame(polys, jsonlite::flatten(df), match.ID = "Oid")
     # Add to previous
     polys_final <- maptools::spRbind(polys_final, polys_temp)
 
