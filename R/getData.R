@@ -101,7 +101,7 @@ cgPoints <- function(class, fields = "", filter = "", un, pw, org) {
                        Lat = ifelse(is.na(Lat), 0, Lat))
   df$CgShape <- NULL
   # Final
-  points_final <- sp::SpatialPointsDataFrame(sp::coordinates(pts), df, match.ID = "Oid")
+  points_final <- sp::SpatialPointsDataFrame(sp::coordinates(pts), jsonlite::flatten(df), match.ID = "Oid")
   sp::proj4string(points_final) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
   while(total > nrow(points_final@data)) {
@@ -125,7 +125,7 @@ cgPoints <- function(class, fields = "", filter = "", un, pw, org) {
     df$CgShape <- NULL
 
     # Temp Data to Bind
-    points_temp <- sp::SpatialPointsDataFrame(sp::coordinates(pts), df, match.ID = "Oid")
+    points_temp <- sp::SpatialPointsDataFrame(sp::coordinates(pts), jsonlite::flatten(df), match.ID = "Oid")
     sp::proj4string(points_temp) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
     # Bind Temp to Final
@@ -198,8 +198,9 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org) {
   sp::spChFIDs(lines) <- load$Oid
   row.names(load) <- load$Oid
 
-  final <- sp::SpatialLinesDataFrame(lines, load)
-  final$CgShape <- NULL
+  load$CgShape <- NULL
+  final <- sp::SpatialLinesDataFrame(lines, jsonlite::flatten(load))
+
   sent <- 1000
 
   while (total > sent) {
@@ -219,9 +220,9 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org) {
 
     sp::spChFIDs(lines) <- load$Oid
     row.names(load) <- load$Oid
+    load$CgShape <- NULL
 
-    tmp <- sp::SpatialLinesDataFrame(lines, load)
-    tmp$CgShape <- NULL
+    tmp <- sp::SpatialLinesDataFrame(lines, jsonlite::flatten(load))
 
     final <- maptools::spRbind(final, tmp)
 
@@ -293,7 +294,7 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
   row.names(df) <- df$Oid
   sp::spChFIDs(polys) <- df$Oid
 
-  polys_final <- sp::SpatialPolygonsDataFrame(polys, df, match.ID = TRUE)
+  polys_final <- sp::SpatialPolygonsDataFrame(polys, jsonlite::flatten(df), match.ID = TRUE)
 
   sent <- 1000
   while(total > sent) {
@@ -328,8 +329,9 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
     # Same ID's
     row.names(df) <- df$Oid
     sp::spChFIDs(polys) <- df$Oid
+
     # Build Temp Shape
-    polys_temp <- sp::SpatialPolygonsDataFrame(polys, df, match.ID = TRUE)
+    polys_temp <- sp::SpatialPolygonsDataFrame(polys, jsonlite::flatten(df), match.ID = TRUE)
     # Add to previous
     polys_final <- maptools::spRbind(polys_final, polys_temp)
 
