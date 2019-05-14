@@ -1,5 +1,5 @@
 
-#' Put Data in Cartegraph
+#' Update records in Cartegraph
 #'
 #' @param class cartegraph class or class and attachment ie 'cgSigns_cgAttachmentsClass', must inlcude the Oid column
 #' @param body DataFrame/tibble to be turned into JSON object
@@ -33,7 +33,7 @@ cgPut <- function(class, body, un, pw, org) {
   }
 }
 
-#' Delete
+#' Delete a record in Cartegraph
 #'
 #' @param class cartegraph class or class and attachment ie 'cgSigns_cgAttachmentsClass'
 #' @param oid Oid of the object you wish to delete
