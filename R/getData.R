@@ -272,6 +272,7 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
 
   df <- data.frame(j[[class]])
   coords <-df$CgShape$Points
+  breaks <- df$CgShape$Breaks
 
   df$CgShape <- NULL
   # Build Shapes
@@ -279,8 +280,28 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
   for (i in 1:length(coords)) {
     # Flip coords so Polygon reads correctly
     coords_t <- as.data.frame(coords[i])[c(2,1)]
-    p <- sp::Polygon(coords_t)
-    ps <- sp::Polygons(list(p),i)
+    breaks_t <- unlist(breaks[i])
+    n_breaks <- length(breaks_t)
+
+    # Create multiple polygons if break
+    if (n_breaks > 0) {
+      p_list <- list()
+      for  (x in 1:n_breaks) {
+        start <- breaks_t[x] + 1
+        if (x == n_breaks) {
+          end <- nrow(coords_t)
+        } else {
+          end <- breaks_t[x + 1]
+        }
+        coords_p <- coords_t[start:end,]
+        p_list <- append(p_list, sp::Polygon(coords_p, hole = FALSE))
+      }
+      ps <- sp::Polygons(p_list, ID = i)
+    } else{
+      p <- sp::Polygon(coords_t)
+      ps <- sp::Polygons(list(p), ID = i)
+    }
+
     if (count == 1) {
       polys <-  sp::SpatialPolygons(list(ps), proj4string=sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
       count <- 2
@@ -309,14 +330,36 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
     # Form Dataframe & coordinates
     df <- data.frame(j[[class]])
     coords <- df$CgShape$Points
+    breaks <- df$CgShape$Breaks
+
     df$CgShape <- NULL
 
     count <- 1
     for (i in 1:length(coords)) {
       # Flip coords so Polygon reads correctly
       coords_t <- as.data.frame(coords[i])[c(2,1)]
-      p <- sp::Polygon(coords_t)
-      ps <- sp::Polygons(list(p),i)
+      breaks_t <- unlist(breaks[i])
+      n_breaks <- length(breaks_t)
+
+      # Create multiple polygons if break
+      if (n_breaks > 0) {
+        p_list <- list()
+        for  (x in 1:n_breaks) {
+          start <- breaks_t[x] + 1
+          if (x == n_breaks) {
+            end <- nrow(coords_t)
+          } else {
+            end <- breaks_t[x + 1]
+          }
+          coords_p <- coords_t[start:end,]
+          p_list <- append(p_list, sp::Polygon(coords_p, hole = FALSE))
+        }
+        ps <- sp::Polygons(p_list, ID = i)
+      } else{
+        p <- sp::Polygon(coords_t)
+        ps <- sp::Polygons(list(p), ID = i)
+      }
+
       if (count == 1) {
         polys <-  sp::SpatialPolygons(list(ps), proj4string=sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
         count <- 2
