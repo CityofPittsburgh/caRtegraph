@@ -1,7 +1,7 @@
 
 #' Put Data in Cartegraph
 #'
-#' @param class cartegraph class or class and attachment ie 'cgSigns_cgAttachmentsClass'
+#' @param class cartegraph class or class and attachment ie 'cgSigns_cgAttachmentsClass', must inlcude the Oid column
 #' @param body DataFrame/tibble to be turned into JSON object
 #' @param un api username
 #' @param pw api password
@@ -11,19 +11,26 @@
 #' @export
 #'
 #' @examples \dontrun{
-#' df$cgSignsClass <- data.frame(Oid = 242283165,
+#' df <- data.frame(Oid = 242283165,
 #'      AddressNumberField = 4771,
 #'      StreetField = '123 Main Street')
 #'
-#' cgPut("cgSignsClass", df,"fakeUN", "fakePW", "AnyTownUSA")
+#' cgPut("cgSignsClass", df, "fakeUN", "fakePW", "AnyTownUSA")
 #' }
 cgPut <- function(class, body, un, pw, org) {
-  json <- jsonlite::toJSON(body)
+  if ("Oid" %in% colnames(body)) {
+    payload <- NULL
+    payload[[class]] <- body
 
-  url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class)
+    json <- jsonlite::toJSON(payload)
 
-  P <- httr::PUT(url, httr::authenticate(un, pw, type = "basic"), body = json)
-  print(httr::content(P))
+    url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class)
+
+    P <- httr::PUT(url, httr::authenticate(un, pw, type = "basic"), body = json)
+    print(httr::content(P))
+  } else {
+    stop("No Oid's included. API Put requests without Oid will not work")
+  }
 }
 
 #' Delete
@@ -60,13 +67,16 @@ cgDelete <- function(class, oid, un, pw, org) {
 #' @export
 #'
 #' @examples \dontrun{
-#' df$cgSignsClass <- data.frame(IDField = "Sign-50",
+#' df <-data.frame(IDField = "Sign-50",
 #'      AddressNumberField = 1765)
 #'
 #' cgPOST("cgSignsClass", df,"fakeUN", "fakePW", "AnyTownUSA")
 #' }
 cgPost <- function(class, body, un, pw, org) {
-  json <- jsonlite::toJSON(body)
+  payload <- NULL
+  payload[[class]] <- body
+
+  json <- jsonlite::toJSON(payload)
 
   url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class)
 
