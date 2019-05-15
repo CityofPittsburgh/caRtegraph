@@ -20,14 +20,18 @@
 cgPut <- function(class, body, un, pw, org) {
   if ("Oid" %in% colnames(body)) {
     payload <- NULL
-    payload[[class]] <- body
+    if (grepl("Spatial", class(body))) {
+      payload[[class]] <- cgShapeProcess(body)
+    } else {
+      payload[[class]] <- body
+    }
 
     json <- jsonlite::toJSON(payload)
 
     url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class)
 
     P <- httr::PUT(url, httr::authenticate(un, pw, type = "basic"), body = json)
-    print(httr::content(P))
+    print(P$status)
   } else {
     stop("No Oid's included. API Put requests without Oid will not work")
   }
@@ -52,7 +56,7 @@ cgDelete <- function(class, oid, un, pw, org) {
 
   D <- httr::DELETE(url, httr::authenticate(un, pw, type = "basic"))
 
-  print(httr::content(D))
+  print(D$status)
 }
 
 #' Create new record(s) in Cartegraph
@@ -74,12 +78,107 @@ cgDelete <- function(class, oid, un, pw, org) {
 #' }
 cgPost <- function(class, body, un, pw, org) {
   payload <- NULL
-  payload[[class]] <- body
+  if (grepl("Spatial", class(body))) {
+    payload[[class]] <- cgShapeProcess(body)
+  } else {
+    payload[[class]] <- body
+  }
 
   json <- jsonlite::toJSON(payload)
 
   url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class)
 
   P <- httr::POST(url, httr::authenticate(un, pw, type = "basic"), body = json)
-  print(httr::content(P))
+  print(P$status)
+}
+
+#' Process a Spatial Shape to pass to Cartehraph API through POST or PUT
+#'
+#' @param shape DataFrame to be turned into nested CgShape column'
+#'
+#' @return tibble with cgShape Colum
+#' @export
+#'
+#' @examples
+cgShapeProcess <- function(shape) {
+  if (grepl("Spatial", class(shape))) {
+    df <- shape@data
+  } else {
+    stop("Please submit a Spatial (sp) Object to be processed")
+  }
+  # Process Polygons
+  if (class(shape)[1] == "SpatialPolygonsDataFrame") {
+    for (i in 1:length(shape@polygons)) {
+      temp <- shape@polygons[[i]]@Polygons
+      centroid <- shape@polygons[[i]]@Polygons[[1]]@labpt
+      Center <- as.data.frame(cbind(Lat = centroid[2], Lng = centroid[1]))
+      CgShape <- NULL
+      if (length(temp) == 1) {
+        Points <- subset(as.data.frame(shape@polygons[[i]]@Polygons[[1]]@coords), select = c(Lat, Lng))
+        Breaks <- list()
+      } else {
+        Breaks <- list(0)
+        Points <- data.frame()
+        for (x in 1:length(temp)) {
+          Points <- rbind(Points, subset(as.data.frame(shape@polygons[[i]]@Polygons[[x]]@coords), select = c(Lat, Lng)))
+          Breaks <- append(Breaks, nrow(Points))
+        }
+      }
+      CgShape$Points <- Points
+      CgShape$Center <- Center
+      CgShape$Breaks <- unlist(Breaks)
+      CgShape$ShapeType <- 3
+
+      temp_df <- df[i,]
+      temp_df$CgShape <- list(CgShape)
+      # RBind
+      if (i == 1) {
+        final <- temp_df
+      } else {
+        final <- rbind(final, temp_df)
+      }
+    }
+  # Process Points
+  } else if (class(shape)[1] == "SpatialPointsDataFrame") {
+    coords <- as.data.frame(sp::coordinates(shape))
+    for (i in 1:nrow(coords)) {
+      CgShape <- NULL
+      Points <- subset(coords[i,], select = c(Lat, Lng))
+
+      CgShape$ShapeType <- 1
+      CgShape$Breaks <- unlist(list())
+      CgShape$Center <- Points
+      CgShape$Points <- Points
+
+      temp_df <- df[i,]
+      temp_df$CgShape <- list(CgShape)
+      # RBind
+      if (i == 1) {
+        final <- temp_df
+      } else {
+        final <- rbind(final, temp_df)
+      }
+    }
+  # Process Lines
+  } else if (class(shape)[1] == "SpatialLinesDataFrame") {
+    centroids <- rgeos::gCentroid(shape, byid = TRUE)@coords
+    for (i in 1:nrow(df)) {
+      CgShape <- NULL
+      CgShape$ShapeType <- 2
+      Points <- subset(shape@lines[[i]]@Lines[[1]]@coords, select = c(Lat, Lng))
+      Center <- data.frame(Lat = centroids[i,2], Lng = centroids[i,1])
+      CgShape$Points <- Points
+      CgShape$Center <- Center
+
+      temp_df <- df[i,]
+      temp_df$CgShape <- list(CgShape)
+      # RBind
+      if (i == 1) {
+        final <- temp_df
+      } else {
+        final <- rbind(final, temp_df)
+      }
+    }
+  }
+  return(final)
 }
