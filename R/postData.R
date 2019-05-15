@@ -92,9 +92,9 @@ cgPost <- function(class, body, un, pw, org) {
   print(P$status)
 }
 
-#' Process a Spatial Shape to pass to Cartehraph API through POST or PUT
+#' **UNTESTED** Process a Spatial Shape to pass to Cartegraph API through POST or PUT
 #'
-#' @param shape DataFrame to be turned into nested CgShape column'
+#' @param shape Spatial DataFrame to be turned into nested CgShape column'
 #'
 #' @return tibble with cgShape Colum
 #' @export
