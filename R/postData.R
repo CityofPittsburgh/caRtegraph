@@ -81,17 +81,26 @@ cgDelete <- function(class, oid, un, pw, org, base_url = "https://cgweb06.carteg
 cgPost <- function(class, body, un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
   payload <- NULL
   if (grepl("Spatial", class(body))) {
-    payload[[class]] <- cgShapeProcess(body)
+    for (i in 1:nrow(body)) {
+      payload[[class]] <- cgShapeProcess(body[i,])
+
+      json <- jsonlite::toJSON(payload, auto_unbox = TRUE, digits = 15)
+
+      url <- paste0(base_url, org, "/api/v1/classes/", class)
+
+      P <- httr::POST(url, httr::authenticate(un, pw, type = "basic"), body = json)
+      print(P$status)
+    }
   } else {
     payload[[class]] <- body
+
+    json <- jsonlite::toJSON(payload, auto_unbox = TRUE, digits = 15)
+
+    url <- paste0(base_url, org, "/api/v1/classes/", class)
+
+    P <- httr::POST(url, httr::authenticate(un, pw, type = "basic"), body = json)
+    print(P$status)
   }
-
-  json <- jsonlite::toJSON(payload, auto_unbox = TRUE, digits = 15)
-
-  url <- paste0(base_url, org, "/api/v1/classes/", class)
-
-  P <- httr::POST(url, httr::authenticate(un, pw, type = "basic"), body = json)
-  print(P$status)
 }
 
 #' **UNTESTED** Process a Spatial Shape to pass to Cartegraph API through POST or PUT
