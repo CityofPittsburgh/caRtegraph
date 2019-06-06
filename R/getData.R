@@ -6,6 +6,7 @@
 #' @param un api username
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
+#' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return data.frame
 #' @examples \dontrun{
@@ -14,13 +15,13 @@
 #' un = "fakeUn", pw = "fakePwd", org = "AnytownUSA")
 #' }
 #' @export
-cgDf <- function(class, fields = "", filter = "", un, pw, org) {
+cgDf <- function(class, fields = "", filter = "", un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
   fields <- ifelse(is.list(fields), paste(fields, collapse = ","), fields)
   fields <- ifelse(fields == "", "", paste0("&fields=", fields))
   # Check for filter
   filter <- ifelse(filter == "", "", paste0("&filter=", filter))
 
-  url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class, "?limit=1000&offset=0", filter, fields)
+  url <- paste0(base_url, org, "/api/v1/classes/", class, "?limit=1000&offset=0", filter, fields)
   g <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
   content <- httr::content(g, as = "text")
 
@@ -37,7 +38,7 @@ cgDf <- function(class, fields = "", filter = "", un, pw, org) {
   while(total > nrow(df_final)) {
     offset <- as.numeric(j$`_metadata`$offset + j$`_metadata`$limit)
 
-    url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
+    url <- paste0(base_url, org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
     request <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
     content <- httr::content(request, as = "text")
 
@@ -58,6 +59,7 @@ cgDf <- function(class, fields = "", filter = "", un, pw, org) {
 #' @param un api username
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
+#' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return SpatialPointsDataFrame
 #'
@@ -70,12 +72,12 @@ cgDf <- function(class, fields = "", filter = "", un, pw, org) {
 #' "fakeUn""fakePwd")
 #' }
 #' @export
-cgPoints <- function(class, fields = "", filter = "", un, pw, org) {
+cgPoints <- function(class, fields = "", filter = "", un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
   fields <- ifelse(is.list(fields), paste(fields, collapse = ","), fields)
   fields <- ifelse(fields == "", "", paste0("&fields=", fields, ",cgShape"))
   filter <- ifelse(filter == "", "", paste0("&filter=", filter))
 
-  url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class, "?limit=1000&offset=0", filter, fields)
+  url <- paste0(base_url, org, "/api/v1/classes/", class, "?limit=1000&offset=0", filter, fields)
 
   g <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
   load <- httr::content(g, as = "text")
@@ -107,7 +109,7 @@ cgPoints <- function(class, fields = "", filter = "", un, pw, org) {
   while(total > nrow(points_final@data)) {
     offset <- as.numeric(j$`_metadata`$offset + j$`_metadata`$limit)
 
-    url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
+    url <- paste0(base_url, org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
 
     g <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
     load <- httr::content(g, as = "text")
@@ -158,6 +160,7 @@ makeLine <- function(x) {
 #' @param un api username
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
+#' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return SpatialPointsDataFrame
 #'
@@ -170,12 +173,12 @@ makeLine <- function(x) {
 #' }
 #' @export
 # Cg General Shape API Call
-cgLine <- function(class, fields = "", filter = "", un, pw, org) {
+cgLine <- function(class, fields = "", filter = "", un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
   fields <- ifelse(is.list(fields), paste(fields, collapse = ","), fields)
   fields <- ifelse(fields == "", "", paste0("&fields=", fields, ",cgShape"))
   filter <- ifelse(filter == "", "", paste0("&filter=", filter))
 
-  url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class, "?limit=1000&offset=0", filter, fields)
+  url <- paste0(base_url, org, "/api/v1/classes/", class, "?limit=1000&offset=0", filter, fields)
 
   g <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
   content <- httr::content(g, as = "text")
@@ -206,7 +209,7 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org) {
   while (total > sent) {
     offset <- as.numeric(j$`_metadata`$offset + j$`_metadata`$limit)
 
-    url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
+    url <- paste0(base_url, org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
 
     g <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
     content <- httr::content(g, as = "text")
@@ -240,6 +243,7 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org) {
 #' @param un api username
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
+#' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return SpatialPointsDataFrame
 #'
@@ -251,12 +255,12 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org) {
 #'     org = "AnytownUSA")
 #' }
 #' @export
-cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
+cgPoly <- function(class, fields = "", filter = "", un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
   fields <- ifelse(is.list(fields), paste(fields, collapse = ","), fields)
   fields <- ifelse(fields == "", "", paste0("&fields=", fields, ",cgShape"))
   filter <- ifelse(filter == "", "", paste0("&filter=", filter))
 
-  url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class, "?limit=1000&offset=0", filter, fields)
+  url <- paste0(base_url, org, "/api/v1/classes/", class, "?limit=1000&offset=0", filter, fields)
 
   g <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
   content <- httr::content(g, as = "text")
@@ -321,7 +325,7 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
   while(total > sent) {
     offset <- as.numeric(j$`_metadata`$offset + j$`_metadata`$limit)
 
-    url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
+    url <- paste0(base_url, org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
 
     request <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
     content <- httr::content(request, as = "text")
@@ -392,6 +396,7 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
 #' @param un api username
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
+#' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return A saved jpeg image
 #' @export
@@ -403,8 +408,8 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org) {
 #'     pw = "fakePwd",
 #'     org = "AnytownUSA")
 #' }
-cgAttachment <- function(class, filename, Oid, un, pw, org) {
-  url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/attachments/primary/", class, "/", Oid)
+cgAttachment <- function(class, filename, Oid, un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
+  url <- paste0(base_url, org, "/api/v1/attachments/primary/", class, "/", Oid)
   filename <- ifelse(grepl(".jpg$", filename), filename, paste0(filename, ".jpg"))
   filename <- gsub(" ", "_", filename)
   r <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
@@ -440,6 +445,7 @@ cgAttachment <- function(class, filename, Oid, un, pw, org) {
 #' @param un api username
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
+#' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return folder of saved jpeg images
 #' @export
@@ -451,7 +457,7 @@ cgAttachment <- function(class, filename, Oid, un, pw, org) {
 #'     pw = "fakePwd",
 #'     org = "AnytownUSA")
 #' }
-cgAttachments <- function(class, outDir ="", filter = '([PrimaryAttachment]%20<>%20"")', zip = FALSE, un, pw, org) {
+cgAttachments <- function(class, outDir ="", filter = '([PrimaryAttachment]%20<>%20"")', zip = FALSE, un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
   # Create Folder for Class images
   filter = ifelse(filter == '([PrimaryAttachment]%20<>%20"")', filter, gsub("\\*)$", '%20AND%20[PrimaryAttachment]%20<>%20"")'))
   outDir = ifelse(outDir == "", class, outDir)
@@ -461,7 +467,7 @@ cgAttachments <- function(class, outDir ="", filter = '([PrimaryAttachment]%20<>
   # Grab attachments by Oid
   for (i in 1:nrow(df)) {
     filename = paste0(outDir, "/", df$IDField[i])
-    cgAttachment(class, filename, df$Oid[i], un, pw , org)
+    cgAttachment(class, filename, df$Oid[i], un, pw , org, base_url)
   }
   if (zip) {
     files2zip <- dir(outDir, full.names = TRUE)

@@ -1,4 +1,3 @@
-
 #' Update records in Cartegraph
 #'
 #' @param class cartegraph class or class and attachment ie 'cgSigns_cgAttachmentsClass', must inlcude the Oid column
@@ -6,6 +5,7 @@
 #' @param un api username
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
+#' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return http status
 #' @export
@@ -17,7 +17,7 @@
 #'
 #' cgPut("cgSignsClass", df, "fakeUN", "fakePW", "AnyTownUSA")
 #' }
-cgPut <- function(class, body, un, pw, org) {
+cgPut <- function(class, body, un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
   if ("Oid" %in% colnames(body)) {
     payload <- NULL
     if (grepl("Spatial", class(body))) {
@@ -28,7 +28,7 @@ cgPut <- function(class, body, un, pw, org) {
 
     json <- jsonlite::toJSON(payload)
 
-    url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class)
+    url <- paste0(base_url, org, "/api/v1/classes/", class)
 
     P <- httr::PUT(url, httr::authenticate(un, pw, type = "basic"), body = json)
     print(P$status)
@@ -44,6 +44,7 @@ cgPut <- function(class, body, un, pw, org) {
 #' @param un api username
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
+#' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return http status
 #' @export
@@ -51,8 +52,8 @@ cgPut <- function(class, body, un, pw, org) {
 #' @examples \dontrun{
 #' cgDelete("cgSignsClass", "123", "fakePW", "AnyTownUSA")
 #' }
-cgDelete <- function(class, oid, un, pw, org) {
-  url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class, "/", oid)
+cgDelete <- function(class, oid, un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
+  url <- paste0(base_url, org, "/api/v1/classes/", class, "/", oid)
 
   D <- httr::DELETE(url, httr::authenticate(un, pw, type = "basic"))
 
@@ -66,17 +67,18 @@ cgDelete <- function(class, oid, un, pw, org) {
 #' @param un api username
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
+#' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return http status
 #' @export
 #'
 #' @examples \dontrun{
-#' df <-data.frame(IDField = "Sign-50",
+#' df <- data.frame(IDField = "Sign-50",
 #'      AddressNumberField = 1765)
 #'
 #' cgPOST("cgSignsClass", df,"fakeUN", "fakePW", "AnyTownUSA")
 #' }
-cgPost <- function(class, body, un, pw, org) {
+cgPost <- function(class, body, un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
   payload <- NULL
   if (grepl("Spatial", class(body))) {
     payload[[class]] <- cgShapeProcess(body)
@@ -86,7 +88,7 @@ cgPost <- function(class, body, un, pw, org) {
 
   json <- jsonlite::toJSON(payload)
 
-  url <- paste0("https://cgweb06.cartegraphoms.com/", org, "/api/v1/classes/", class)
+  url <- paste0(base_url, org, "/api/v1/classes/", class)
 
   P <- httr::POST(url, httr::authenticate(un, pw, type = "basic"), body = json)
   print(P$status)
@@ -96,7 +98,7 @@ cgPost <- function(class, body, un, pw, org) {
 #'
 #' @param shape Spatial DataFrame to be turned into nested CgShape column
 #'
-#' @return tibble with cgShape Colum
+#' @return tibble with cgShape Column
 #' @export
 #'
 #' @examples
