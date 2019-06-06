@@ -86,7 +86,7 @@ cgPost <- function(class, body, un, pw, org, base_url = "https://cgweb06.cartegr
     payload[[class]] <- body
   }
 
-  json <- jsonlite::toJSON(payload)
+  json <- jsonlite::toJSON(payload, auto_unbox = TRUE, digits = 15)
 
   url <- paste0(base_url, org, "/api/v1/classes/", class)
 
@@ -116,19 +116,21 @@ cgShapeProcess <- function(shape) {
       Center <- as.data.frame(cbind(Lat = centroid[2], Lng = centroid[1]))
       CgShape <- NULL
       if (length(temp) == 1) {
-        Points <- subset(as.data.frame(shape@polygons[[i]]@Polygons[[1]]@coords), select = c(Lat, Lng))
+        Points <- subset(as.data.frame(shape@polygons[[i]]@Polygons[[1]]@coords), select = c(V2, V1))
+        colnames(Points) <- c("Lat", "Lng")
         Breaks <- list()
       } else {
         Breaks <- list(0)
         Points <- data.frame()
         for (x in 1:length(temp)) {
-          Points <- rbind(Points, subset(as.data.frame(shape@polygons[[i]]@Polygons[[x]]@coords), select = c(Lat, Lng)))
+          Points <- rbind(Points, subset(as.data.frame(shape@polygons[[i]]@Polygons[[x]]@coords), select = c(V2, V1)))
+          colnames(Points) <- c("Lat", "Lng")
           Breaks <- append(Breaks, nrow(Points))
         }
       }
       CgShape$Points <- Points
       CgShape$Center <- Center
-      CgShape$Breaks <- unlist(Breaks)
+      CgShape$Breaks <- Breaks
       CgShape$ShapeType <- 3
 
       temp_df <- df[i,]
@@ -145,7 +147,8 @@ cgShapeProcess <- function(shape) {
     coords <- as.data.frame(sp::coordinates(shape))
     for (i in 1:nrow(coords)) {
       CgShape <- NULL
-      Points <- subset(coords[i,], select = c(Lat, Lng))
+      Points <- subset(coords[i,], select = c(V2, V1))
+      colnames(Points) <- c("Lat", "Lng")
 
       CgShape$ShapeType <- 1
       CgShape$Breaks <- unlist(list())
@@ -167,7 +170,8 @@ cgShapeProcess <- function(shape) {
     for (i in 1:nrow(df)) {
       CgShape <- NULL
       CgShape$ShapeType <- 2
-      Points <- subset(shape@lines[[i]]@Lines[[1]]@coords, select = c(Lat, Lng))
+      Points <- subset(shape@lines[[i]]@Lines[[1]]@coords, select = c(V2, V1))
+      colnames(Points) <- c("Lat", "Lng")
       Center <- data.frame(Lat = centroids[i,2], Lng = centroids[i,1])
       CgShape$Points <- Points
       CgShape$Center <- Center
