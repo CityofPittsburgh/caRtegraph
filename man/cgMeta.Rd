@@ -4,7 +4,8 @@
 \alias{cgMeta}
 \title{Meta Data}
 \usage{
-cgMeta(class = "", un, pw, org)
+cgMeta(class = "", un, pw, org,
+  base_url = "https://cgweb06.cartegraphoms.com/")
 }
 \arguments{
 \item{class}{string (optional) specify class or classes to get metadata for}
@@ -14,17 +15,20 @@ cgMeta(class = "", un, pw, org)
 \item{pw}{string cartegraph password}
 
 \item{org}{orginization API ID ie 'PittsburghPA'}
+
+\item{base_url}{API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")}
 }
 \value{
 list
-
- @examples \dontrun{
+}
+\description{
+Meta Data
+}
+\examples{
+\dontrun{
  # Entire System Meta Data
  cgMeta()
  # Meta Data for two classes
  cgMeta(c("cgFacilitiesClass", "cgPavementClass"))
  }
-}
-\description{
-Meta Data
 }

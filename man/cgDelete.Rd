@@ -2,9 +2,10 @@
 % Please edit documentation in R/postData.R
 \name{cgDelete}
 \alias{cgDelete}
-\title{Title}
+\title{Delete a record in Cartegraph}
 \usage{
-cgDelete(class, oid, un, pw, org)
+cgDelete(class, oid, un, pw, org,
+  base_url = "https://cgweb06.cartegraphoms.com/")
 }
 \arguments{
 \item{class}{cartegraph class or class and attachment ie 'cgSigns_cgAttachmentsClass'}
@@ -16,12 +17,14 @@ cgDelete(class, oid, un, pw, org)
 \item{pw}{api password}
 
 \item{org}{orginization API ID ie 'PittsburghPA'}
+
+\item{base_url}{API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")}
 }
 \value{
 http status
 }
 \description{
-Title
+Delete a record in Cartegraph
 }
 \examples{
 \dontrun{

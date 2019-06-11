@@ -16,5 +16,8 @@ Imports:
     sp,
     rgdal,
     jsonlite,
-    maptools
+    maptools,
+    png,
+    jpeg,
+    rgeos
 RoxygenNote: 6.1.1

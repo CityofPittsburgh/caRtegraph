@@ -6,7 +6,7 @@
 \usage{
 cgAttachments(class, outDir = "",
   filter = "([PrimaryAttachment]\%20<>\%20\\"\\")", zip = FALSE, un,
-  pw, org)
+  pw, org, base_url = "https://cgweb06.cartegraphoms.com/")
 }
 \arguments{
 \item{class}{class requesting attachments from}
@@ -22,6 +22,8 @@ cgAttachments(class, outDir = "",
 \item{pw}{api password}
 
 \item{org}{orginization API ID ie 'PittsburghPA'}
+
+\item{base_url}{API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")}
 }
 \value{
 folder of saved jpeg images

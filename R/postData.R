@@ -8,7 +8,6 @@
 #' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return http status
-#' @export
 #'
 #' @examples \dontrun{
 #' df <- data.frame(Oid = 242283165,
@@ -17,6 +16,7 @@
 #'
 #' cgPut("cgSignsClass", df, "fakeUN", "fakePW", "AnyTownUSA")
 #' }
+#' @export
 cgPut <- function(class, body, un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
   if ("Oid" %in% colnames(body)) {
     payload <- NULL
@@ -70,7 +70,6 @@ cgDelete <- function(class, oid, un, pw, org, base_url = "https://cgweb06.carteg
 #' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return http status
-#' @export
 #'
 #' @examples \dontrun{
 #' df <- data.frame(IDField = "Sign-50",
@@ -78,6 +77,7 @@ cgDelete <- function(class, oid, un, pw, org, base_url = "https://cgweb06.carteg
 #'
 #' cgPOST("cgSignsClass", df,"fakeUN", "fakePW", "AnyTownUSA")
 #' }
+#' @export
 cgPost <- function(class, body, un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
   payload <- NULL
   if (grepl("Spatial", class(body))) {
@@ -108,9 +108,9 @@ cgPost <- function(class, body, un, pw, org, base_url = "https://cgweb06.cartegr
 #' @param shape Spatial DataFrame to be turned into nested CgShape column
 #'
 #' @return tibble with cgShape Column
-#' @export
 #'
 #' @examples
+#' @export
 cgShapeProcess <- function(shape) {
   if (grepl("Spatial", class(shape))) {
     df <- shape@data

@@ -8,7 +8,7 @@
 #'
 #' @return list
 #'
-#'  @examples \dontrun{
+#' @examples \dontrun{
 #'  # Entire System Meta Data
 #'  cgMeta()
 #'  # Meta Data for two classes

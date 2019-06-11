@@ -4,7 +4,8 @@
 \alias{cgDf}
 \title{Return dataframe object rom CartegraphA PI}
 \usage{
-cgDf(class, fields = "", filter = "", un, pw, org)
+cgDf(class, fields = "", filter = "", un, pw, org,
+  base_url = "https://cgweb06.cartegraphoms.com/")
 }
 \arguments{
 \item{class}{cartegraph class name}
@@ -18,6 +19,8 @@ cgDf(class, fields = "", filter = "", un, pw, org)
 \item{pw}{api password}
 
 \item{org}{orginization API ID ie 'PittsburghPA'}
+
+\item{base_url}{API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")}
 }
 \value{
 data.frame
