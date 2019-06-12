@@ -10,7 +10,8 @@ Description: Easily communicate with the Cartegraph API Service.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: 
+Imports:
+    plyr,
     dplyr,
     httr,
     sp,

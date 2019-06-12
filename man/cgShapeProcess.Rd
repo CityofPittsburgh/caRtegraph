@@ -2,7 +2,7 @@
 % Please edit documentation in R/postData.R
 \name{cgShapeProcess}
 \alias{cgShapeProcess}
-\title{**UNTESTED** Process a Spatial Shape to pass to Cartegraph API through POST or PUT}
+\title{**UNTESTED** Process a Spatial Shape to pass to Cartegraph API through POST or PUT. (Tested for Polygons, not tested for Lines or Points)}
 \usage{
 cgShapeProcess(shape)
 }
@@ -13,5 +13,5 @@ cgShapeProcess(shape)
 tibble with cgShape Column
 }
 \description{
-**UNTESTED** Process a Spatial Shape to pass to Cartegraph API through POST or PUT
+**UNTESTED** Process a Spatial Shape to pass to Cartegraph API through POST or PUT. (Tested for Polygons, not tested for Lines or Points)
 }
