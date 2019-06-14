@@ -142,7 +142,7 @@ cgShapeProcess <- function(shape) {
         # RBind
         final <- plyr::rbind.fill(final, temp_df)
       } else {
-        warning("Your Spatial Object has rows with multiple polygons, they have been broken up and given a letter at the end of their IDField.")
+        warning(paste("Your Spatial Objectin in row", i, "has multiple polygons, they have been broken up and given a letter at the end of their IDField."))
         for (x in 1:length(temp)) {
           temp_df <- df[i,]
           temp_df$IDField <- paste(temp_df$IDField, toupper(letters[x]))

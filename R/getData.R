@@ -29,24 +29,27 @@ cgDf <- function(class, fields = "", filter = "", un, pw, org, base_url = "https
   if (httr::http_error(g)) {
     stop(j$Message)
   } else if (j$`_metadata`$totalCount == 0) {
-    stop("No rows for this request")
-  }
+    warning("No rows for this request")
 
-  total <- as.numeric(j$`_metadata`$totalCount)
-  df_final <- data.frame(j[[class]])
+    df_final <- data.frame()
+  } else {
 
-  while(total > nrow(df_final)) {
-    offset <- as.numeric(j$`_metadata`$offset + j$`_metadata`$limit)
+    total <- as.numeric(j$`_metadata`$totalCount)
+    df_final <- data.frame(j[[class]])
 
-    url <- paste0(base_url, org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
-    request <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
-    content <- httr::content(request, as = "text")
+    while(total > nrow(df_final)) {
+      offset <- as.numeric(j$`_metadata`$offset + j$`_metadata`$limit)
 
-    j <- jsonlite::fromJSON(content)
+      url <- paste0(base_url, org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
+      request <- httr::GET(url, httr::authenticate(un, pw, type = "basic"))
+      content <- httr::content(request, as = "text")
 
-    df <- data.frame(j[[class]])
+      j <- jsonlite::fromJSON(content)
 
-    df_final <- rbind(df_final, df)
+      df <- data.frame(j[[class]])
+
+      df_final <- rbind(df_final, df)
+    }
   }
   return(df_final)
 }
