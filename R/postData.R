@@ -25,7 +25,7 @@ cgPut <- function(class, body, un, pw, org, base_url = "https://cgweb06.cartegra
     } else {
       payload[[class]] <- body
     }
-    json <- jsonlite::toJSON(payload)
+    json <- jsonlite::toJSON(payload, auto_unbox = TRUE, digits = 15)
 
     url <- paste0(base_url, org, "/api/v1/classes/", class)
 
@@ -129,7 +129,7 @@ cgShapeProcess <- function(shape) {
       CgShape <- NULL
       if (length(temp) == 1) {
         Points <- subset(as.data.frame(shape@polygons[[i]]@Polygons[[1]]@coords))
-        colnames(Points) <- c("Lat", "Lng")
+        colnames(Points) <- c("Lng", "Lat")
         # Sort Points for API call
 
         CgShape$Points <- Points
@@ -148,7 +148,7 @@ cgShapeProcess <- function(shape) {
           temp_df$IDField <- paste(temp_df$IDField, toupper(letters[x]))
 
           Points <- subset(as.data.frame(shape@polygons[[i]]@Polygons[[x]]@coords))
-          colnames(Points) <- c("Lat", "Lng")
+          colnames(Points) <- c("Lng", "Lat")
 
           # Sort Points for API call
           CgShape$Points <- Points
@@ -168,7 +168,7 @@ cgShapeProcess <- function(shape) {
     for (i in 1:nrow(coords)) {
       CgShape <- NULL
       Points <- subset(coords[i,])
-      colnames(Points) <- c("Lat", "Lng")
+      colnames(Points) <- c("Lng", "Lat")
 
       CgShape$Points <- Points
       CgShape$Breaks <- list()
@@ -186,7 +186,7 @@ cgShapeProcess <- function(shape) {
     for (i in 1:nrow(df)) {
       CgShape <- NULL
       Points <- subset(data.frame(shape@lines[[i]]@Lines[[1]]@coords))
-      colnames(Points) <- c("Lat", "Lng")
+      colnames(Points) <- c("Lng", "Lat")
 
       CgShape$Points <- Points
       CgShape$Breaks <- list()
