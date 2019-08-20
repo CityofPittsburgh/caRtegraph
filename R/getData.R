@@ -75,7 +75,7 @@ cgDf <- function(class, fields = "", filter = "", un, pw, org, base_url = "https
 #' "fakeUn""fakePwd")
 #' }
 #' @export
-cgPoints <- function(class, fields = "", filter = "", un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
+cgPoints <- function(class, fields = "", filter = "", un, pw, org, method = "sp", base_url = "https://cgweb06.cartegraphoms.com/") {
   fields <- ifelse(is.list(fields), paste(fields, collapse = ","), fields)
   fields <- ifelse(fields == "", "", paste0("&fields=", fields, ",cgShape"))
   filter <- ifelse(filter == "", "", paste0("&filter=", filter))
@@ -105,11 +105,21 @@ cgPoints <- function(class, fields = "", filter = "", un, pw, org, base_url = "h
   pts <- dplyr::mutate(pts, Lng = ifelse(is.na(Lng), 0, Lng),
                        Lat = ifelse(is.na(Lat), 0, Lat))
   df$CgShape <- NULL
-  # Final
-  points_final <- sp::SpatialPointsDataFrame(sp::coordinates(pts), jsonlite::flatten(df), match.ID = "Oid")
-  sp::proj4string(points_final) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
-  while(total > nrow(points_final@data)) {
+  # Final
+  if (method == "sf") {
+    ptsdf <- dplyr::left_join(pts, df, by = "Oid")
+    points_final <- sf::st_as_sf(x = ptsdf,
+                                 coords = c("Lng", "Lat"),
+                                 crs = "+proj=longlat +datum=WGS84")
+    rows <- nrow(points_final)
+  } else {
+    points_final <- sp::SpatialPointsDataFrame(sp::coordinates(pts), jsonlite::flatten(df), match.ID = "Oid")
+    sp::proj4string(points_final) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+    rows <- nrow(points_final@data)
+  }
+
+  while(total > rows) {
     offset <- as.numeric(j$`_metadata`$offset + j$`_metadata`$limit)
 
     url <- paste0(base_url, org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
@@ -129,12 +139,22 @@ cgPoints <- function(class, fields = "", filter = "", un, pw, org, base_url = "h
                          Lat = ifelse(is.na(Lat), 0, Lat))
     df$CgShape <- NULL
 
-    # Temp Data to Bind
-    points_temp <- sp::SpatialPointsDataFrame(sp::coordinates(pts), jsonlite::flatten(df), match.ID = "Oid")
-    sp::proj4string(points_temp) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+    if (method == "sf") {
+      ptsdf <- dplyr::left_join(pts, df, by = "Oid")
+      points_final <- sf::st_as_sf(x = ptsdf,
+                                  coords = c("Lng", "Lat"),
+                                  crs = "+proj=longlat +datum=WGS84") %>%
+        dplyr::bind_rows(points_final)
+      rows <- nrow(points_final)
+    } else {
+      # Temp Data to Bind
+      points_temp <- sp::SpatialPointsDataFrame(sp::coordinates(pts), jsonlite::flatten(df), match.ID = "Oid")
+      sp::proj4string(points_temp) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
-    # Bind Temp to Final
-    points_final <- maptools::spRbind(points_final, points_temp)
+      # Bind Temp to Final
+      points_final <- maptools::spRbind(points_final, points_temp)
+      rows <- nrow(points_final@data)
+    }
   }
 
   return(points_final)
@@ -163,6 +183,7 @@ makeLine <- function(x) {
 #' @param un api username
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
+#' @param method "sp" for Spatial objects output, "sf" for simple features
 #' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return SpatialPointsDataFrame
@@ -176,7 +197,7 @@ makeLine <- function(x) {
 #' }
 #' @export
 # Cg General Shape API Call
-cgLine <- function(class, fields = "", filter = "", un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
+cgLine <- function(class, fields = "", filter = "", un, pw, org, method = "sp", base_url = "https://cgweb06.cartegraphoms.com/") {
   fields <- ifelse(is.list(fields), paste(fields, collapse = ","), fields)
   fields <- ifelse(fields == "", "", paste0("&fields=", fields, ",cgShape"))
   filter <- ifelse(filter == "", "", paste0("&filter=", filter))
@@ -235,6 +256,10 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org, base_url = "htt
     sent <- 1000 + offset
   }
 
+  if (method == "sf") {
+    final <- sf::st_as_sf(final)
+  }
+
   return(final)
 }
 
@@ -246,6 +271,7 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org, base_url = "htt
 #' @param un api username
 #' @param pw api password
 #' @param org orginization API ID ie 'PittsburghPA'
+#' @param method "sp" for Spatial objects output, "sf" for simple features
 #' @param base_url API Base URL (defaulted to "https://cgweb06.cartegraphoms.com/")
 #'
 #' @return SpatialPointsDataFrame
@@ -258,7 +284,7 @@ cgLine <- function(class, fields = "", filter = "", un, pw, org, base_url = "htt
 #'     org = "AnytownUSA")
 #' }
 #' @export
-cgPoly <- function(class, fields = "", filter = "", un, pw, org, base_url = "https://cgweb06.cartegraphoms.com/") {
+cgPoly <- function(class, fields = "", filter = "", un, pw, org, method = "sp", base_url = "https://cgweb06.cartegraphoms.com/") {
   fields <- ifelse(is.list(fields), paste(fields, collapse = ","), fields)
   fields <- ifelse(fields == "", "", paste0("&fields=", fields, ",cgShape"))
   filter <- ifelse(filter == "", "", paste0("&filter=", filter))

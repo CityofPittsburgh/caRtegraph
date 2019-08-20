@@ -116,8 +116,10 @@ cgPost <- function(class, body, un, pw, org, base_url = "https://cgweb06.cartegr
 cgShapeProcess <- function(shape) {
   if (grepl("Spatial", class(shape))) {
     df <- shape@data
+  } else if (grepl("sf", class(shape)[1])) {
+    stop("Please transform your Simple Feature (sf) to a Spatial Object before submitting")
   } else {
-    stop("Please submit a Spatial (sp) Object to be processed")
+    stop("Must submit a Spatial (sp) Object to be processed")
   }
   final <- data.frame()
   # Process Polygons
