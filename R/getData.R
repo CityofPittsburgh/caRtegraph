@@ -106,20 +106,11 @@ cgPoints <- function(class, fields = "", filter = "", un, pw, org, method = "sp"
                        Lat = ifelse(is.na(Lat), 0, Lat))
   df$CgShape <- NULL
 
-  # Final
-  if (method == "sf") {
-    ptsdf <- dplyr::left_join(pts, df, by = "Oid")
-    points_final <- sf::st_as_sf(x = ptsdf,
-                                 coords = c("Lng", "Lat"),
-                                 crs = "+proj=longlat +datum=WGS84")
-    rows <- nrow(points_final)
-  } else {
-    points_final <- sp::SpatialPointsDataFrame(sp::coordinates(pts), jsonlite::flatten(df), match.ID = "Oid")
-    sp::proj4string(points_final) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
-    rows <- nrow(points_final@data)
-  }
+  # Final Data to Bind t0
+  points_final <- sp::SpatialPointsDataFrame(sp::coordinates(pts), jsonlite::flatten(df), match.ID = "Oid")
+  sp::proj4string(points_final) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
-  while(total > rows) {
+  while(total > nrow(points_final@data)) {
     offset <- as.numeric(j$`_metadata`$offset + j$`_metadata`$limit)
 
     url <- paste0(base_url, org, "/api/v1/classes/", class, "?limit=1000&offset=", offset, filter, fields)
@@ -139,22 +130,16 @@ cgPoints <- function(class, fields = "", filter = "", un, pw, org, method = "sp"
                          Lat = ifelse(is.na(Lat), 0, Lat))
     df$CgShape <- NULL
 
-    if (method == "sf") {
-      ptsdf <- dplyr::left_join(pts, df, by = "Oid")
-      points_final <- sf::st_as_sf(x = ptsdf,
-                                  coords = c("Lng", "Lat"),
-                                  crs = "+proj=longlat +datum=WGS84") %>%
-        dplyr::bind_rows(points_final)
-      rows <- nrow(points_final)
-    } else {
-      # Temp Data to Bind
-      points_temp <- sp::SpatialPointsDataFrame(sp::coordinates(pts), jsonlite::flatten(df), match.ID = "Oid")
-      sp::proj4string(points_temp) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+    # Temp Data to Bind
+    points_temp <- sp::SpatialPointsDataFrame(sp::coordinates(pts), jsonlite::flatten(df), match.ID = "Oid")
+    sp::proj4string(points_temp) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
-      # Bind Temp to Final
-      points_final <- maptools::spRbind(points_final, points_temp)
-      rows <- nrow(points_final@data)
-    }
+    # Bind Temp to Final
+    points_final <- maptools::spRbind(points_final, points_temp)
+  }
+
+  if (method == "sf") {
+    points_final <- sf::st_as_sf(points_final)
   }
 
   return(points_final)
