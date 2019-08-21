@@ -413,6 +413,9 @@ cgPoly <- function(class, fields = "", filter = "", un, pw, org, method = "sp", 
 
     sent <- 1000 + offset
   }
+  if (method == "sf") {
+    polys_final <- sf::st_as_sf(polys_final)
+  }
 
   return(polys_final)
 }
