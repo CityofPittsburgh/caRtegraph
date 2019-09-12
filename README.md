@@ -1,6 +1,8 @@
 # caRtegraph
 R package for communicating with the Cartegraph API
 
+![hex](https://raw.githubusercontent.com/CityofPittsburgh/caRtegraph/master/caRtegraph_hex.png)
+
 ### Author
 [Geoffrey Arnold](mailto:geoffrey.arnold@pittsburghpa.gov)
 
