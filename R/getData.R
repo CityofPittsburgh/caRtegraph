@@ -483,7 +483,7 @@ cgAttachments <- function(class, outDir ="", filter = '([PrimaryAttachment]%20<>
   df <- caRtegraph::cgDf(class, "IDField,PrimaryAttachmentField", filter, un, pw, org)
   # Grab attachments by Oid
   for (i in 1:nrow(df)) {
-    filename = paste0(outDir, "/", df$IDField[i])
+    filename = paste0(outDir, "/", df$Oid[i])
     cgAttachment(class, filename, df$Oid[i], un, pw , org, base_url)
   }
   if (zip) {
